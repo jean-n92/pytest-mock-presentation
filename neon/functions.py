@@ -1,9 +1,9 @@
+import os
 import random
 import time
 import logging
 import requests
 import names
-import pyspark
 
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as f
@@ -11,8 +11,9 @@ from pyspark.sql import functions as f
 from dataclasses import dataclass
 from typing import List, Optional
 
-logging.basicConfig(
+LOGGER = logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s', level=logging.DEBUG)
+PATH = os.path.abspath(os.path.dirname(__file__))
 
 
 @dataclass
@@ -65,6 +66,21 @@ def retrieve_data(usernumber: Optional[int] = None,
     return req_collection
 
 
+def establish_spark():
+    """
+    Simple function to establish a Spark Session if needed.
+    It has already in itself the configuration property that
+    allows it to use the local repository as warehouse.
+    """
+    spark = (SparkSession
+             .builder
+             .appName("Cat facts")
+             .config("spark.sql.warehouse.dir", PATH + "/local_warehouse")
+             .enableHiveSupport()
+             .getOrCreate())
+    return spark
+
+
 if __name__ == "__main__":
-    data = retrieve_data(usernumber=2, waiting=False)
+    data = retrieve_data(usernumber=1, waiting=False)
     print(data)
