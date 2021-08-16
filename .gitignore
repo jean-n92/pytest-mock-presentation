@@ -1,2 +1,5 @@
 .vscode/
 .python-version
+local_warehouse/
+derby.log
+metastore_db/
