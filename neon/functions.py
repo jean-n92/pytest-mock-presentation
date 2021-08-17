@@ -1,17 +1,14 @@
-import json
 import os
 import random
 import time
 import logging
 import requests
-import names
 
 from pyspark import SparkContext
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as f
 
-from dataclasses import dataclass
-from typing import List, Optional, Union
+from typing import List, Optional
 
 LOGGER = logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s', level=logging.DEBUG)
