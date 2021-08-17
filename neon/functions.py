@@ -86,7 +86,8 @@ def establish_spark():
 
 def group_and_save(spark: SparkSession, facts: List[dict]):
     """
-    DOCU
+    Function that receives the JSON data, parses it into a Spark Dataframe
+    and then appends it into my table random_cats_facts.
     """
     logging.debug(
         "Grouping cat facts list, {number} elements".format(number=len(facts)))
@@ -95,11 +96,20 @@ def group_and_save(spark: SparkSession, facts: List[dict]):
     rdd = sc.parallelize(data)
     df = (spark.read.json(rdd)
           .withColumn("load_dts", f.current_timestamp()))
-    return df
+    logging.debug("Dataframe created")
+    df = df.select(
+        "fact",
+        "length",
+        "load_dts"
+    )
+    try:
+        df.write.mode("append").saveAsTable("default.random_cats_facts")
+        logging.debug("Table has been saved")
+    except Exception as e:
+        logging.error("Couldn't save dataframe \n %s" % e)
 
 
 if __name__ == "__main__":
     data = process_data(usernumber=3, waiting=1)
     spark = establish_spark()
-    df = group_and_save(spark, data)
-    df.show(10)
+    group_and_save(spark, data)
