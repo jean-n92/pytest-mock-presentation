@@ -1,3 +1,6 @@
+"""
+Simple showcase application for the mock presentation.
+"""
 import os
 import random
 import time
