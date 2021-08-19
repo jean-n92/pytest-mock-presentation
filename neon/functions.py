@@ -15,7 +15,7 @@ from typing import List, Optional
 
 LOGGER = logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s', level=logging.DEBUG)
-PATH = os.path.abspath(os.path.dirname(__file__))
+PATH = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
 
 def make_request(waiting: Optional[int] = None) -> None:
