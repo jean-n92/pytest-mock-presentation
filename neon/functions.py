@@ -93,7 +93,7 @@ def group_and_save(spark: SparkSession, facts: List[dict]):
         "Grouping cat facts list, {number} elements".format(number=len(facts)))
     sc = SparkContext.getOrCreate()
     logging.debug("Spark context retrieved")
-    rdd = sc.parallelize(data)
+    rdd = sc.parallelize(facts)
     df = (spark.read.json(rdd)
           .withColumn("load_dts", f.current_timestamp()))
     logging.debug("Dataframe created")
