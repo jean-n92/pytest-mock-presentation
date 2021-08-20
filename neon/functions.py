@@ -2,6 +2,7 @@
 Simple showcase application for the mock presentation.
 """
 import os
+import sys
 import random
 import time
 import logging
@@ -107,9 +108,3 @@ def group_and_save(spark: SparkSession, facts: List[dict]):
         logging.debug("Table has been saved")
     except Exception as e:
         logging.error("Couldn't save dataframe \n %s" % e)
-
-
-if __name__ == "__main__":
-    data = process_data(usernumber=3, waiting=1)
-    spark = establish_spark()
-    group_and_save(spark, data)

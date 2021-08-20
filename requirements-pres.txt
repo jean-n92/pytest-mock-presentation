@@ -1,0 +1,3 @@
+ipytest==0.11.0
+jupyter==1.0.0
+rise==5.7.1
