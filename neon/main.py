@@ -2,7 +2,7 @@ import argparse
 import logging
 from neon.functions import *
 
-def main():
+def main(): # pragma: no cover
     logging.disable()
     parser = argparse.ArgumentParser(
         description='Get a random cat fact or save few of them into a table.')
