@@ -1,6 +1,8 @@
 import unittest
+import requests
 import time
 
+from requests.exceptions import ConnectionError
 from unittest import mock
 from neon.functions import *
 
@@ -27,7 +29,22 @@ class TestAPI(unittest.TestCase):
             "fact": "This is a sad fact",
             "length": "-97"
         }]
+        cls.requests = cls.establishOnlineStatus()
+    
+    # TODO: this should define whether the system is online or not.
+    # If not online, could be cool to use a patched version of requests.
+    @classmethod
+    def establishOnlineStatus(cls):
+        try:
+            requests.get("https://catfact.ninja/fact")
+            return requests
+        except ConnectionError:
+            patched_requests = mock.create_autospec(requests)
+            patched_requests.get.json.return_value = cls.mocked_data
+            return patched_requests
 
+    # FIXME: mock has no access to class methods, how to do that?
+    #@mock.patch("neon.functions.requests", new=self.requests)
     def test_retrieve_data_with_waiting(self):
         t0 = time.perf_counter()
         actual: dict = retrieve_data(waiting=5)

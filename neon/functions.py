@@ -12,7 +12,9 @@ from pyspark import SparkContext
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as f
 
-from typing import List, Optional
+from typing import List, Optional, Union
+
+from requests.exceptions import ConnectionError
 
 LOGGER = logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s', level=logging.DEBUG)
@@ -34,7 +36,7 @@ def make_request(waiting: Optional[int] = None) -> None:
     return None
 
 
-def retrieve_data(waiting: Optional[int] = None) -> dict:
+def retrieve_data(waiting: Optional[int] = None) -> Union[dict, None]:
     """
     Function that retrieves a standard JSON content from a public API.
     If no custom url is specified, it will retrieve a certain number of
@@ -45,8 +47,12 @@ def retrieve_data(waiting: Optional[int] = None) -> dict:
     logging.debug("Now arranging API call to %s" % req_url)
     make_request(waiting) if waiting >= 0 else None
     logging.debug("Starting call now")
-    data = requests.get(url=req_url).json()
-    return data
+    try:
+        data = requests.get(url=req_url).json()
+        return data
+    except ConnectionError:
+        logging.error("Could not connect to remote host")
+        return None
 
 
 def process_data(usernumber: int = 1,
