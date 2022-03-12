@@ -1,4 +1,4 @@
-name: Python application
+name: Test with tox
 
 on:
   push:
