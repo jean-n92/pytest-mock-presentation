@@ -1,19 +1,16 @@
 """
 Simple showcase application for the mock presentation.
 """
+import logging
 import os
-import sys
 import random
 import time
-import logging
-import requests
+from typing import List, Optional, Union
 
+import requests
 from pyspark import SparkContext
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as f
-
-from typing import List, Optional, Union
-
 from requests.exceptions import ConnectionError
 
 LOGGER = logging.basicConfig(

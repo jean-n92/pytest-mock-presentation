@@ -1,9 +1,10 @@
-import unittest
-import requests
 import time
-
-from requests.exceptions import ConnectionError
+import unittest
 from unittest import mock
+
+import requests
+from requests.exceptions import ConnectionError
+
 from neon.functions import *
 
 LOGGER = logging.basicConfig(
