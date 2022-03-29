@@ -1,17 +1,14 @@
-import argparse
 import logging
+import sys
+from typing import List
 
-from neon.functions import establish_spark, group_and_save, process_data
+from neon.utils.functions import parser, process_data
+from neon.utils.sparkutils import establish_spark, group_and_save
 
 
 def main():  # pragma: no cover
     logging.disable()
-    parser = argparse.ArgumentParser(
-        description='Get a random cat fact or save few of them into a table.')
-    parser.add_argument('--facts', '-f', type=int, default=1, help='how many facts should the app extract')
-    parser.add_argument('--waiting', '-w', type=int, default=1, help='inefficiency time expressed in seconds')
-    parser.add_argument('--save', '-s', type=bool, default=False, help='should the application save everything or not')
-    args = parser.parse_args()
+    args = parser(sys.argv[1:])
     data: dict = process_data(args.facts, args.waiting)
     if args.save:
         spark = establish_spark()
