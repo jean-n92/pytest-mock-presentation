@@ -3,8 +3,13 @@ python:
   - 3.7
   - 3.8
 before_install:
-  - python -m pip install --upgrade pip
-  - pip install tox-travis
+  - python -m pip install --upgrade pip virtualenv
+  - python -m virtualenv venv
+  - source venv/bin/activate
+  - pip install --upgrade pip setuptools wheel tox-travis
 install:
   - python setup.py develop
 script: tox
+after_script:
+  - source venv/bin/deactivate
+  - rm -rf venv

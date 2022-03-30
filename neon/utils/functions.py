@@ -3,6 +3,7 @@ Simple showcase application for the mock presentation.
 """
 import argparse
 import logging
+import os
 import random
 import time
 from distutils.log import debug, info
@@ -27,6 +28,23 @@ def fake_request(waiting: Optional[int] = None) -> None:
     return None
 
 
+def get_proxies() -> Union[None, dict]:
+    """
+    Retrieves proxy setting as dictionary, if in use.
+    If not, simply returns None.
+    """
+    retrieve = ["http_proxy", "https_proxy"]
+    hit = {key.lower(): value for (key, value) in os.environ.items() if key.lower() in retrieve}
+    proxies = {}
+    for key in hit:
+        try:
+            protocol = key.split("_")[0]
+            proxies[protocol] = hit[key]
+        except KeyError:
+            proxies[protocol] = None
+    return proxies
+
+
 def retrieve_data(waiting: Optional[int] = None,
                   url: str = "https://catfact.ninja/fact") -> Union[dict, None]:
     """
@@ -39,11 +57,12 @@ def retrieve_data(waiting: Optional[int] = None,
     fake_request(waiting) if waiting >= 0 else None
     logging.debug("Starting call now...")
     try:
-        data = requests.get(url=url).json()
+        # NOTE: verify=False is there for showcase purpose only
+        data = requests.get(url=url, proxies=get_proxies(), verify=False).json()
         return data
     except ConnectionError:
         logging.error("Could not connect to remote host")
-        return None
+        raise
 
 
 def process_data(usernumber: int = 1,
