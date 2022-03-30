@@ -3,7 +3,6 @@ Simple showcase application for the mock presentation.
 """
 import argparse
 import logging
-import os
 import random
 import time
 from distutils.log import debug, info
@@ -88,7 +87,9 @@ def parser(args: List) -> argparse.Namespace:
     return parser.parse_args(args)
 
 # TODO check this one out with the proper documentation
-def logger() -> logging.Logger:
+
+
+def logger() -> logging.Logger:  # pragma: no cover
     """
     Standard logging functionalities. Provides both a file logger and a stream logger, in order to [...]
     """
