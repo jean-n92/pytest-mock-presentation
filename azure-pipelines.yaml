@@ -1,0 +1,41 @@
+trigger:
+  branches:
+    include:
+      - master
+      - minor/*
+
+stages:
+  - stage: CICD
+    displayName: A sample CI/CD
+    pool:
+      vmImage: "ubuntu-latest"
+
+    jobs:
+    - job:
+      strategy:
+        matrix:
+          Python36:
+            python.version: "3.6"
+          Python38:
+            python.version: "3.8"
+
+      steps:
+        - checkout: self
+          clean: true
+
+        - task: UsePythonVersion@0
+          displayName: "Use Python $(python.version)"
+          inputs:
+            versionSpec: "$(python.version)"
+
+        - script: pip install --upgrade pip virtualenv
+          displayName: "Install dependencies"
+
+        - script: python -m virtualenv build_venv && source build_venv/bin/activate
+          displayName: "Create virtual environment and activate it"
+
+        - script: pip install --upgrade pip tox
+          displayName: "Install Tox"
+
+        - script: tox -e py
+          displayName: "Run Tox"
