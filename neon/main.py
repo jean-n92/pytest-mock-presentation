@@ -1,12 +1,13 @@
-import logging
 import sys
 
-from neon.utils.functions import parser, process_data
+import urllib3
+
+from neon.utils.functions import logger, parser, process_data
 from neon.utils.sparkutils import establish_spark
 
 
 def main():  # pragma: no cover
-    logging.disable()
+    urllib3.disable_warnings()
     args = parser(sys.argv[1:])
     data: dict = process_data(args.facts, args.waiting)
     if args.save:
@@ -14,7 +15,7 @@ def main():  # pragma: no cover
         (spark, data)
     else:
         for entry in data:
-            print(entry["fact"])
+            logger().info(entry["fact"])
 
 
 if __name__ == "__main__":

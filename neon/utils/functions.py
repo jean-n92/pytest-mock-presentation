@@ -6,11 +6,28 @@ import logging
 import os
 import random
 import time
-from distutils.log import debug, info
 from typing import List, Optional, Union
 
 import requests
 from requests.exceptions import ConnectionError
+
+
+def logger(position: str = None) -> logging.Logger:  # pragma: no cover
+    """
+    Standard logging functionalities. Provides both a file logger and a stream logger.
+    """
+    logFormatter = logging.Formatter("%(asctime)s [%(filename)-10.10s] [%(levelname)-5.5s]  %(message)s")
+    main_logger = logging.getLogger("neon")
+    main_logger.setLevel("INFO")
+    if not len(main_logger.handlers):
+        consoleHandler = logging.StreamHandler()
+        consoleHandler.setFormatter(logFormatter)
+        main_logger.addHandler(consoleHandler)
+    if len(main_logger.handlers) == 1 and position:
+        fileHandler = logging.FileHandler("{0}/{1}.log".format(position, "neon.log"))
+        fileHandler.setFormatter(logFormatter)
+        main_logger.addHandler(fileHandler)
+    return main_logger
 
 
 def fake_request(waiting: Optional[int] = None) -> None:
@@ -24,7 +41,7 @@ def fake_request(waiting: Optional[int] = None) -> None:
     t0 = time.perf_counter()
     time.sleep(timer)
     t1 = time.perf_counter() - t0
-    logging.debug("Time elapsed: %.1f seconds", t1)
+    logger().debug("Time elapsed: %.1f seconds", t1)
     return None
 
 
@@ -53,15 +70,15 @@ def retrieve_data(waiting: Optional[int] = None,
     custom cat facts. To simulate a slow connection or a very heavy
     data, the fake_request method had been embedded.
     """
-    logging.debug(f"Now arranging API call to {url}")
+    logger().debug(f"Now arranging API call to {url}")
     fake_request(waiting) if waiting >= 0 else None
-    logging.debug("Starting call now...")
+    logger().debug("Starting call now...")
     try:
         # NOTE: verify=False is there for showcase purpose only
         data = requests.get(url=url, proxies=get_proxies(), verify=False).json()
         return data
     except ConnectionError:
-        logging.error("Could not connect to remote host")
+        logger().error("Could not connect to remote host")
         raise
 
 
@@ -77,7 +94,7 @@ def process_data(usernumber: int = 1,
     for n in range(0, usernumber):
         data = retrieve_data(waiting)
         req_collection.append(data)
-        logging.debug(
+        logger().debug(
             f"Load {n + 1} of {usernumber} is done")
     return req_collection
 
@@ -104,21 +121,3 @@ def parser(args: List) -> argparse.Namespace:
                         default=False,
                         help="should the application save everything or not")
     return parser.parse_args(args)
-
-# TODO check this one out with the proper documentation
-
-
-def logger() -> logging.Logger:  # pragma: no cover
-    """
-    Standard logging functionalities. Provides both a file logger and a stream logger, in order to [...]
-    """
-    logging.basicConfig(
-        format="%(asctime)s - %(levelname)s - %(message)s", level=logging.DEBUG)
-    logger = logging.getLogger("console")
-    if not logger.hasHandlers(logging.FileHandler):
-        logger.addHandler(logging.FileHandler)
-        logger.setLevel(debug)
-        logger.addHandler(logging.StreamHandler)
-    if not logger.hasHandler(logging.StreamHandler):
-        logger.setLevel(info)
-    return logger

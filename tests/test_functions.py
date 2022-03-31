@@ -1,4 +1,3 @@
-import logging
 import os
 import time
 import unittest
@@ -9,12 +8,9 @@ import requests
 from pyspark.sql import SparkSession
 from requests.exceptions import ConnectionError
 
-from neon.utils.functions import fake_request, process_data, retrieve_data
+from neon.utils.functions import (fake_request, logger, process_data,
+                                  retrieve_data)
 from neon.utils.sparkutils import establish_spark, group_and_save
-
-LOGGER = logging.basicConfig(
-    format='%(asctime)s - %(levelname)s - %(message)s', level=logging.DEBUG)
-PATH = os.path.abspath(os.path.dirname(__file__))
 
 
 class TestAPI(unittest.TestCase):
@@ -23,7 +19,7 @@ class TestAPI(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls) -> None:
-        cls.logging = logging.getLogger("TestSession")
+        cls.logging = logger()
         cls.logging.debug("Starting test session...")
         cls.mocked_data: List[dict] = [{
             "fact": "This is a random fact",
@@ -65,7 +61,7 @@ class TestSparkFunctions(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls) -> None:
-        cls.logging = logging.getLogger("TestSession")
+        cls.logging = logger()
         cls.logging.debug("Starting test session...")
         cls.mocked_data: List[dict] = [{
             "fact": "This is a random fact",
