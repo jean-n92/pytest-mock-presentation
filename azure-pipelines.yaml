@@ -5,37 +5,27 @@ trigger:
       - minor/*
 
 stages:
-  - stage: CICD
-    displayName: A sample CI/CD
-    pool:
-      vmImage: "ubuntu-latest"
+  - stage: CI
+    displayName: "A simple multi-platform CI"
 
     jobs:
-    - job:
-      strategy:
-        matrix:
-          Python36:
-            python.version: "3.6"
-          Python38:
-            python.version: "3.8"
+      - job:
+        displayName: "Testing on"
+        strategy:
+          matrix:
+            linux:
+              imageName: "ubuntu-latest"
+            windows:
+                imageName: "windows-latest"
 
-      steps:
-        - checkout: self
-          clean: true
+        pool:
+          vmImage: $(imageName)
 
-        - task: UsePythonVersion@0
-          displayName: "Use Python $(python.version)"
-          inputs:
-            versionSpec: "$(python.version)"
-
-        - script: pip install --upgrade pip virtualenv
-          displayName: "Install dependencies"
-
-        - script: python -m virtualenv build_venv && source build_venv/bin/activate
-          displayName: "Create virtual environment and activate it"
+        steps:
 
         - script: pip install --upgrade pip tox
-          displayName: "Install Tox"
+          displayName: "Install tox"
 
-        - script: tox -e py
-          displayName: "Run Tox"
+        - script: tox
+          displayName: "Run tox"
+
