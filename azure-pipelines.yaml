@@ -1,0 +1,30 @@
+trigger:
+  branches:
+    include:
+      - master
+      - minor/*
+
+stages:
+  - stage: CI
+    displayName: "A simple multi-platform CI"
+
+    jobs:
+      - job:
+        displayName: "Testing on"
+        strategy:
+          matrix:
+            linux:
+              imageName: "ubuntu-latest"
+            windows:
+                imageName: "windows-latest"
+
+        pool:
+          vmImage: $(imageName)
+
+        steps:
+
+        - script: pip install --upgrade pip tox
+          displayName: "Install tox"
+
+        - script: tox
+          displayName: "Run tox"

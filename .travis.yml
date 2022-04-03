@@ -1,14 +1,15 @@
 language: python
 python:
   - 3.7
+  - 3.8
 before_install:
-  - python --version
-  - python -m pip install pip
-  - python -m pip install codecov
-  - python -m pip install pytest
+  - python -m pip install --upgrade pip virtualenv
+  - python -m virtualenv venv
+  - source venv/bin/activate
+  - pip install --upgrade pip setuptools wheel tox-travis
 install:
-  - python -m pip install -r requirements.txt
   - python setup.py develop
-script: pytest
-after_success:
-  - codecov
+script: tox
+after_script:
+  - source venv/bin/deactivate
+  - rm -rf venv
