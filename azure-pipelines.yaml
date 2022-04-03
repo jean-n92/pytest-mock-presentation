@@ -28,4 +28,3 @@ stages:
 
         - script: tox
           displayName: "Run tox"
-
